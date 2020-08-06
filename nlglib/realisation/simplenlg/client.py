@@ -69,12 +69,14 @@ class Socket:
 
     def send_string(self, msg, encoding='utf-8'):
         """ Send a string message. """
-        # first sent the length of the message
-        msg_size = hton(len(msg))
+        # first generate the message to be sent
+        msg_data = bytearray(msg, encoding)
+
+        # Send the size of the message
+        msg_size = hton(len(msg_data))
         self._send(msg_size, len(msg_size))
 
         # now send the message
-        msg_data = bytearray(msg, encoding)
         length = self._send(msg_data, len(msg_data))
         return length
 

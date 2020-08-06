@@ -118,7 +118,7 @@ xsi:schemaLocation="http://simplenlg.googlecode.com/svn/trunk/res/xml ">
             '{inner}<base>{neg}{word}</base>{sep}'
             '{outer}</{tag}>{sep}'
         ).format(
-            word=quote_plus(node.value), neg=neg, **self._get_args(f=features)
+            word=node.value, neg=neg, **self._get_args(f=features)
         )
         self.xml += text
 
@@ -135,7 +135,7 @@ xsi:schemaLocation="http://simplenlg.googlecode.com/svn/trunk/res/xml ">
             '{inner}<base>{word}</base>{sep}'
             '{outer}</{tag}>{sep}'
         ).format(
-            word=quote_plus(word), id=id, **self._get_args(f=features)
+            word=word, id=id, **self._get_args(f=features)
         )
         self.xml += text
 
