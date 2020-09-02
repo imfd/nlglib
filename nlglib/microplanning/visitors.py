@@ -146,6 +146,7 @@ xsi:schemaLocation="http://simplenlg.googlecode.com/svn/trunk/res/xml ">
         features = self.features_to_xml_attributes(node)
         self.xml += '{outer}<{tag} xsi:type="SPhraseSpec"{f}>{sep}' \
             .format(**self._get_args(f=features))
+        self._process_element(node, 'cue_phrase', name='cuePhrase')
         self._process_elements(node, 'front_modifiers', name='frontMod')
         self._process_element(node, 'subject', name='subj')
         self._process_elements(node, 'premodifiers', name='preMod')

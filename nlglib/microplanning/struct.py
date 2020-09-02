@@ -639,6 +639,7 @@ class Phrase(Element):
     """
 
     _head = Element()
+    _cue_phrase = Element()
     category = category.PHRASE
 
     def __init__(self, features=None, parent=None, id=None, **kwargs):
@@ -647,6 +648,7 @@ class Phrase(Element):
         self.head = kwargs.pop('head', None)
         self.complements = (ElementList(parent=self) + kwargs.pop('complements', []))
         self.postmodifiers = (ElementList(parent=self) + kwargs.pop('postmodifiers', []))
+        self.cue_phrase = kwargs.pop('cue_phrase', None)
 
     def __bool__(self):
         """Return True """
@@ -656,7 +658,8 @@ class Phrase(Element):
         return (
             super().__eq__(other) and self.premodifiers == other.premodifiers and
             self.head == other.head and self.complements == other.complements and
-            self.postmodifiers == other.postmodifiers
+            self.postmodifiers == other.postmodifiers and
+            self.cue_phrase == other.cue_phrase
         )
 
     def __hash__(self):
@@ -670,6 +673,7 @@ class Phrase(Element):
         rv.premodifiers = self.premodifiers[:]
         rv.complements = self.complements[:]
         rv.postmodifiers = self.postmodifiers[:]
+        rv.cue_phrase = self.cue_phrase
         return rv
 
     # noinspection PyArgumentList
@@ -682,6 +686,7 @@ class Phrase(Element):
         rv.head = deepcopy(self.head, memo=memo)
         rv.complements = deepcopy(self.complements, memo=memo)
         rv.postmodifiers = deepcopy(self.postmodifiers, memo=memo)
+        rv.cue_phrase = deepcopy(self.cue_phrase, memo=memo)
         return rv
 
     def __iadd__(self, other):
@@ -711,6 +716,22 @@ class Phrase(Element):
             self._head = Element()
         self._head[DISCOURSE_FUNCTION] = DISCOURSE_FUNCTION.head
 
+    @property
+    def cue_phrase(self):
+        return self._cue_phrase
+
+    @cue_phrase.setter
+    def cue_phrase(self, value):
+        if self._cue_phrase:
+            self._cue_phrase.parent = None
+        if value is not None:
+            new_value = raise_to_element(value)
+            new_value.parent = self
+            self._cue_phrase = new_value
+        else:
+            self._cue_phrase = Element()
+        self._cue_phrase[DISCOURSE_FUNCTION] = DISCOURSE_FUNCTION.cue_phrase
+
     def elements(self, recursive=False, itself=None):
         """Return a generator yielding elements contained in the element
 
@@ -720,6 +741,9 @@ class Phrase(Element):
         """
         if itself == 'first':
             yield self
+
+        if self.cue_phrase != Element():
+            yield self.cue_phrase
 
         yield from self.premodifiers.elements(recursive, itself)
         if recursive:
